@@ -22,6 +22,11 @@ button.go:disabled{opacity:.45}
 .harbour h1{color:var(--ink)}.harbour p{opacity:.85}.harbour a{display:block;background:var(--ink);color:var(--sand);text-decoration:none;padding:14px 16px;border-radius:14px;margin:10px 0;font-weight:600}
 .harbour a small{display:block;font-weight:400;opacity:.7;font-size:12px}
 footer{font-size:12px;opacity:.45;text-align:center;padding:12px}
+.paper{background:var(--sand);color:var(--ink);border-radius:6px;padding:26px 24px;font:italic 24px/1.35 "New York","Iowan Old Style",Georgia,serif;transform:rotate(-1.5deg);box-shadow:0 20px 40px rgba(0,0,0,.4);margin:14px 0 18px}
+.felt{font-size:13px;opacity:.7}
+button.go.lamp{background:transparent;color:var(--lamp);border:1px solid rgba(255,219,143,.5);position:relative;overflow:hidden}
+button.go.lamp i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lamp);opacity:.9;transition:width 1.2s linear}
+button.go.lamp.on{color:var(--ink)}button.go.lamp span{position:relative}
 </style></head><body><main>
 <section id="write">
 <h1>What's in the bottle?</h1><p class="sub">No name. No reply. Just one true sentence. It washes up on a stranger's phone.</p>
@@ -31,7 +36,8 @@ footer{font-size:12px;opacity:.45;text-align:center;padding:12px}
 <div class="chips" id="chips"></div>
 <button class="go" id="go" disabled>Drop it into the sea</button>
 </section>
-<section id="sent" class="out"><div style="font-size:40px">〰</div><h1>It's out there now.</h1><p>Someone, somewhere, will pull the cork and send a light. Look at the big screen.</p><p><a href="#" onclick="location.reload();return false" style="color:var(--lamp)">Drop another</a></p></section>
+<section id="sent" class="out"><div style="font-size:40px">〰</div><h1>It's out there now.</h1><p>Someone, somewhere, will pull the cork and send a light. Look at the big screen.</p><p style="margin-top:22px"><button class="go" id="tide">Wait for the tide</button></p><p><a href="#" onclick="location.reload();return false" style="color:var(--lamp)">Drop another</a></p></section>
+<section id="wash" class="out" style="padding-top:8vh"><p class="label" id="washlabel">something washed up</p><div class="paper" id="paper"></div><p class="felt" id="felt"></p><p style="margin-top:22px"><button class="go lamp" id="beam"><i></i><span>Hold to send a light</span></button></p><p id="lit" style="display:none;font:600 26px/1.2 'New York','Iowan Old Style',Georgia,serif;color:var(--lamp);margin-top:18px">Your light reached them.</p><p><a href="#" id="next" style="color:var(--lamp)">Let it drift on</a></p></section>
 <section id="held" class="out"><h1>The sea held onto that one.</h1><p id="why"></p><p><a href="#" onclick="location.reload();return false" style="color:var(--lamp)">Rewrite it</a></p></section>
 <section id="crisis" class="out"><div class="harbour"><h1>Let's stay on shore a moment.</h1><p>What you wrote sounds like more than a bottle should carry alone. It wasn't sent. It's still yours. There are people who want to hear it right now, out loud, from you.</p>
 <a href="https://findahelpline.com">Find a helpline where you are<small>findahelpline.com · free, confidential</small></a>
@@ -52,4 +58,18 @@ go.onclick=async()=>{go.disabled=true;go.textContent="Corking it…";try{
 const r=await fetch(API+"/drop",{method:"POST",headers:{"Content-Type":"application/json",apikey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU",Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU"},body:JSON.stringify({keeper_id:keeper,text:t.value.trim(),mood})});
 const j=await r.json();if(j.status==="sent")show("sent");else if(j.status==="crisis")show("crisis");else{document.getElementById("why").textContent=j.reason||"The sea couldn't carry that one.";show("held")}
 }catch(e){document.getElementById("why").textContent="The sea didn't answer. Try again.";show("held")}};
+
+const hdr={"Content-Type":"application/json",apikey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU",Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU"};
+let current=null;
+async function tide(){document.getElementById("sent").style.display="none";document.getElementById("wash").style.display="block";document.getElementById("paper").textContent="Waiting for the tide…";document.getElementById("felt").textContent="";document.getElementById("lit").style.display="none";document.getElementById("beam").style.display="";
+ try{const r=await fetch(API+"/tide?keeper_id="+keeper,{headers:hdr});const j=await r.json();current=j.bottle;
+  if(!current){document.getElementById("paper").textContent="The sea is quiet right now. You've read every bottle that drifted by.";document.getElementById("beam").style.display="none";document.getElementById("washlabel").textContent="quiet water";return}
+  document.getElementById("washlabel").textContent=current.synthetic?"drift · from the sea's own stories":"live · a person";
+  document.getElementById("paper").textContent="“"+current.text+"”";const M={storm:"anxious",deep:"heavy",ember:"angry",fog:"tired",kelp:"hopeful",sun:"grateful"};document.getElementById("felt").textContent="felt "+(M[current.mood]||current.mood);
+ }catch(e){document.getElementById("paper").textContent="The sea didn't answer. Try again."}}
+document.getElementById("tide").onclick=tide;document.getElementById("next").onclick=e=>{e.preventDefault();tide()};
+const beam=document.getElementById("beam"),bar=beam.querySelector("i");let holdT=null;
+function down(e){e.preventDefault();if(!current)return;beam.classList.add("on");bar.style.width="100%";holdT=setTimeout(async()=>{holdT=null;beam.style.display="none";document.getElementById("lit").style.display="block";if(navigator.vibrate)navigator.vibrate(30);try{await fetch(API+"/beam",{method:"POST",headers:hdr,body:JSON.stringify({keeper_id:keeper,bottle_id:current.id})})}catch(_){}} ,1200)}
+function up(){if(holdT){clearTimeout(holdT);holdT=null}beam.classList.remove("on");bar.style.width="0"}
+beam.addEventListener("pointerdown",down);beam.addEventListener("pointerup",up);beam.addEventListener("pointerleave",up);beam.addEventListener("pointercancel",up);
 </script></body></html>
