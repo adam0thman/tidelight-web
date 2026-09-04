@@ -1,5 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Tidelight · drop a bottle</title>
+<meta name="theme-color" content="#080d21"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 :root{--night:#080d21;--dusk:#1a1c47;--foam:#dbf0f2;--sand:#f7e6c7;--ink:#241f1a;--lamp:#ffdb8f}
 *{box-sizing:border-box}body{margin:0;min-height:100dvh;background:linear-gradient(180deg,var(--night),var(--dusk) 60%,#0b2a3a);color:var(--foam);font:17px/1.45 -apple-system,system-ui,"SF Pro Rounded",sans-serif;display:flex;flex-direction:column}
@@ -25,7 +26,7 @@ footer{font-size:12px;opacity:.45;text-align:center;padding:12px}
 .sealine{font:italic 18px/1.35 "New York","Iowan Old Style",Georgia,serif;opacity:.75;margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1)}
 .paper{background:var(--sand);color:var(--ink);border-radius:6px;padding:26px 24px;font:italic 24px/1.35 "New York","Iowan Old Style",Georgia,serif;transform:rotate(-1.5deg);box-shadow:0 20px 40px rgba(0,0,0,.4);margin:14px 0 18px}
 .felt{font-size:13px;opacity:.7}
-button.go.lamp{background:transparent;color:var(--lamp);border:1px solid rgba(255,219,143,.5);position:relative;overflow:hidden}
+button.go.lamp{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none;background:transparent;color:var(--lamp);border:1px solid rgba(255,219,143,.5);position:relative;overflow:hidden}
 button.go.lamp i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lamp);opacity:.9;transition:width 1.2s linear}
 button.go.lamp.on{color:var(--ink)}button.go.lamp span{position:relative}
 </style></head><body><main>
@@ -74,5 +75,5 @@ document.getElementById("tide").onclick=tide;document.getElementById("next").onc
 const beam=document.getElementById("beam"),bar=beam.querySelector("i");let holdT=null;
 function down(e){e.preventDefault();if(!current)return;beam.classList.add("on");bar.style.width="100%";holdT=setTimeout(async()=>{holdT=null;beam.style.display="none";document.getElementById("lit").style.display="block";if(navigator.vibrate)navigator.vibrate(30);try{await fetch(API+"/beam",{method:"POST",headers:hdr,body:JSON.stringify({keeper_id:keeper,bottle_id:current.id})})}catch(_){}} ,1200)}
 function up(){if(holdT){clearTimeout(holdT);holdT=null}beam.classList.remove("on");bar.style.width="0"}
-beam.addEventListener("pointerdown",down);beam.addEventListener("pointerup",up);beam.addEventListener("pointerleave",up);beam.addEventListener("pointercancel",up);
+beam.addEventListener("contextmenu",e=>e.preventDefault());beam.addEventListener("pointerdown",down);beam.addEventListener("pointerup",up);beam.addEventListener("pointerleave",up);beam.addEventListener("pointercancel",up);
 </script></body></html>
