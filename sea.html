@@ -36,6 +36,12 @@ h1{margin:0;font:600 clamp(28px,3.4vw,54px)/1 "New York","Iowan Old Style",Georg
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const API="https://qjyhswvteapeuxjbskke.supabase.co/functions/v1/api";
+const SEA_I18N={ms:{"Scan to drop a bottle":"Imbas untuk lepaskan sebotol","one true sentence · no name":"satu ayat yang benar · tanpa nama","Nobody's words are shown on this screen. Only the glass. A stranger reads each bottle, one at a time, on their own phone.":"Kata-kata sesiapa tidak dipaparkan di skrin ini. Hanya kaca. Orang asing membaca setiap botol, satu demi satu, di telefon mereka sendiri.","Listening to the water…":"Mendengar air…","bottles drifting":"botol hanyut","live today":"aktif hari ini","lights sent":"cahaya dihantar","notes back":"nota balas","A bottle drifted in.":"Sebotol hanyut masuk.","Someone in the room just dropped a bottle.":"Seseorang di sini baru sahaja melepaskan sebotol.","A light just landed on someone's bottle.":"Sebuah cahaya baru sahaja tiba di botol seseorang.","A note back just reached someone's lantern.":"Sebuah nota balas baru sahaja sampai ke tanglung seseorang.","The sea didn't answer. Trying again…":"Laut tidak menjawab. Mencuba lagi…"},
+zh:{"Scan to drop a bottle":"扫码投一个瓶子","one true sentence · no name":"一句真话 · 不留名","Nobody's words are shown on this screen. Only the glass. A stranger reads each bottle, one at a time, on their own phone.":"这块屏幕不显示任何人的话，只显示玻璃。每一个瓶子，都由一个陌生人在自己的手机上，一次读一个。","Listening to the water…":"听着水声……","bottles drifting":"个瓶子在漂","live today":"人今天在线","lights sent":"束光已送出","notes back":"条回信","A bottle drifted in.":"一个瓶子漂了进来。","Someone in the room just dropped a bottle.":"在场的某个人刚投下一个瓶子。","A light just landed on someone's bottle.":"一束光刚落在某人的瓶子上。","A note back just reached someone's lantern.":"一封回信刚到达某人的灯笼。","The sea didn't answer. Trying again…":"海没有回应。再试一次……"}};
+const SL=(new URLSearchParams(location.search).get("lang")||navigator.language||"en").toLowerCase();const SLANG=SL.startsWith("zh")?"zh":(SL.startsWith("ms")?"ms":"en");
+const ST=s=>(SEA_I18N[SLANG]&&SEA_I18N[SLANG][s])||s;
+if(SLANG!=="en"){document.documentElement.lang=SLANG;const walk=n=>{for(const c of n.childNodes){if(c.nodeType===3){const v=c.nodeValue.trim();if(v&&SEA_I18N[SLANG][v])c.nodeValue=c.nodeValue.replace(v,SEA_I18N[SLANG][v])}else walk(c)}};walk(document.querySelector(".ui"))}
+
 const ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU";
 const GLASS={storm:"#7390b8",deep:"#6169d6",ember:"#ed7052",fog:"#adbdb3",kelp:"#45ad8f",sun:"#f5bd52"};
 new QRCode(document.getElementById("qr"),{text:"https://adam0thman.github.io/tidelight-web/",width:512,height:512,correctLevel:QRCode.CorrectLevel.M});
@@ -96,17 +102,17 @@ let evT=null;function say(msg){const e=document.getElementById("event");e.textCo
 
 async function poll(){
   try{
-    const r=await fetch(API+"/sea?keeper_id=00000000-0000-4000-8000-00000000f1de",{headers:{apikey:ANON,Authorization:"Bearer "+ANON}});
+    const r=await fetch(API+"/sea?keeper_id=00000000-0000-4000-8000-00000000f1de&lang="+(SLANG==="zh"?"zh-Hans":SLANG),{headers:{apikey:ANON,Authorization:"Bearer "+ANON}});
     const j=await r.json();const sea=j.sea;
     const lineEl=document.getElementById("line");if(lineEl.textContent!==sea.line){lineEl.style.opacity=0;setTimeout(()=>{lineEl.textContent=sea.line;lineEl.style.opacity=.92},800)}
-    document.getElementById("counts").textContent=`${sea.drifting} bottles drifting · ${sea.live_today} live today · ${sea.lights} lights sent · ${sea.notes||0} notes back`;
+    document.getElementById("counts").textContent=`${sea.drifting} ${ST("bottles drifting")} · ${sea.live_today} ${ST("live today")} · ${sea.lights} ${ST("lights sent")} · ${sea.notes||0} ${ST("notes back")}`;
     const recent=(j.recent||[]).slice().reverse();const t=performance.now()/1000;
-    for(const b of recent){if(!known.has(b.id)){known.add(b.id);const nb={id:b.id,mood:b.mood,synthetic:b.synthetic,kind:b.kind};if(!first){nb.drop=t;nb.dx=W*(.15+Math.random()*.6);say(b.synthetic?"A bottle drifted in.":"Someone in the room just dropped a bottle.")}bottles.push(nb)}}
+    for(const b of recent){if(!known.has(b.id)){known.add(b.id);const nb={id:b.id,mood:b.mood,synthetic:b.synthetic,kind:b.kind};if(!first){nb.drop=t;nb.dx=W*(.15+Math.random()*.6);say(b.synthetic?ST("A bottle drifted in."):ST("Someone in the room just dropped a bottle."))}bottles.push(nb)}}
     if(bottles.length>24)bottles=bottles.slice(-24);
-    if(!first&&sea.lights>state.lights){flare=1;say("A light just landed on someone's bottle.")}
-    else if(!first&&(sea.notes||0)>state.notes){flare=.6;say("A note back just reached someone's lantern.")}
+    if(!first&&sea.lights>state.lights){flare=1;say(ST("A light just landed on someone's bottle."))}
+    else if(!first&&(sea.notes||0)>state.notes){flare=.6;say(ST("A note back just reached someone's lantern."))}
     state={mood:sea.mood,lights:sea.lights,notes:sea.notes||0};first=false;
-  }catch(e){document.getElementById("counts").textContent="The sea didn't answer. Trying again…"}
+  }catch(e){document.getElementById("counts").textContent=ST("The sea didn't answer. Trying again…")}
   setTimeout(poll,4000);
 }
 poll();requestAnimationFrame(draw);
