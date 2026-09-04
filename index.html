@@ -54,7 +54,8 @@ let mood="deep";const chips=document.getElementById("chips");
 for(const [id,label,c] of MOODS){const b=document.createElement("button");b.className="chip"+(id===mood?" on":"");b.style.setProperty("--c",c);b.innerHTML="<b></b>"+label;b.onclick=()=>{mood=id;[...chips.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");document.documentElement.style.setProperty("--glass",c)};chips.appendChild(b)}
 document.documentElement.style.setProperty("--glass","#6169d6");
 const t=document.getElementById("t"),go=document.getElementById("go");
-let keeper=localStorage.getItem("tidelight.keeper");if(!keeper){keeper=crypto.randomUUID();localStorage.setItem("tidelight.keeper",keeper)}
+function uuid(){if(crypto.randomUUID)return crypto.randomUUID();const b=crypto.getRandomValues(new Uint8Array(16));b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;const h=[...b].map(x=>x.toString(16).padStart(2,"0")).join("");return h.slice(0,8)+"-"+h.slice(8,12)+"-"+h.slice(12,16)+"-"+h.slice(16,20)+"-"+h.slice(20)}
+let keeper=localStorage.getItem("tidelight.keeper");if(!keeper){keeper=uuid();localStorage.setItem("tidelight.keeper",keeper)}
 t.oninput=()=>{document.getElementById("bar").style.width=(t.value.length/140*100)+"%";document.getElementById("n").textContent=140-t.value.length;go.disabled=t.value.trim().length<3};
 function show(id){document.getElementById("write").style.display="none";document.getElementById(id).style.display="block"}
 go.onclick=async()=>{go.disabled=true;go.textContent="Corking it…";try{
@@ -65,7 +66,7 @@ const j=await r.json();if(j.status==="sent")show("sent");else if(j.status==="cri
 const hdr={"Content-Type":"application/json",apikey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU",Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU"};
 let current=null;
 fetch(API+"/sea?keeper_id="+keeper,{headers:hdr}).then(r=>r.json()).then(j=>{document.getElementById("sealine").textContent=j.sea.line+"  ·  "+j.sea.drifting+" drifting";}).catch(()=>{document.getElementById("sealine").textContent="The sea is out there. Say something to it."});
-async function tide(){document.getElementById("sent").style.display="none";document.getElementById("wash").style.display="block";document.getElementById("paper").textContent="Waiting for the tide…";document.getElementById("felt").textContent="";document.getElementById("lit").style.display="none";document.getElementById("beam").style.display="";
+async function tide(){up();document.getElementById("sent").style.display="none";document.getElementById("wash").style.display="block";document.getElementById("paper").textContent="Waiting for the tide…";document.getElementById("felt").textContent="";document.getElementById("lit").style.display="none";document.getElementById("beam").style.display="";
  try{const r=await fetch(API+"/tide?keeper_id="+keeper,{headers:hdr});const j=await r.json();current=j.bottle;
   if(!current){document.getElementById("paper").textContent="The sea is quiet right now. You've read every bottle that drifted by.";document.getElementById("beam").style.display="none";document.getElementById("washlabel").textContent="quiet water";return}
   document.getElementById("washlabel").textContent=current.synthetic?"drift · from the sea's own stories":"live · a person";
