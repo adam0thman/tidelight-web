@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tidelight · drop a bottle</title>
+<style>
+:root{--night:#080d21;--dusk:#1a1c47;--foam:#dbf0f2;--sand:#f7e6c7;--ink:#241f1a;--lamp:#ffdb8f}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;background:linear-gradient(180deg,var(--night),var(--dusk) 60%,#0b2a3a);color:var(--foam);font:17px/1.45 -apple-system,system-ui,"SF Pro Rounded",sans-serif;display:flex;flex-direction:column}
+main{flex:1;padding:28px 22px 40px;max-width:520px;width:100%;margin:0 auto}
+h1{font:600 34px/1.1 "New York","Iowan Old Style",Georgia,serif;margin:0 0 6px}
+.sub{opacity:.65;margin:0 0 22px}
+textarea{width:100%;min-height:130px;border:0;border-radius:18px;background:rgba(255,255,255,.06);color:var(--foam);padding:16px;font:italic 22px/1.35 "New York","Iowan Old Style",Georgia,serif;resize:none;outline:none}
+textarea::placeholder{color:rgba(219,240,242,.35)}
+.tide{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin:10px 4px 4px;overflow:hidden}.tide i{display:block;height:100%;width:0;background:var(--glass,#6a8bb8);transition:width .2s}
+.count{text-align:right;font-size:12px;opacity:.5;margin:0 6px 18px}
+.label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;margin:0 0 10px}
+.chips{display:flex;justify-content:space-between;margin-bottom:26px}
+.chip{background:none;border:0;color:var(--foam);opacity:.6;font:13px system-ui;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0}
+.chip b{width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);background:var(--c);box-shadow:0 0 8px color-mix(in srgb,var(--c) 40%,transparent);transition:transform .2s}
+.chip.on{opacity:1}.chip.on b{transform:scale(1.12);border-color:#fff;box-shadow:0 0 18px var(--c)}
+button.go{width:100%;border:0;border-radius:999px;padding:16px;background:var(--sand);color:var(--ink);font:600 17px system-ui;cursor:pointer}
+button.go:disabled{opacity:.45}
+.out{display:none;text-align:center;padding-top:20vh}.out h1{font-size:34px}.out p{opacity:.7}
+.harbour{background:linear-gradient(180deg,#f7e6c7,#f2cc9e);color:var(--ink);padding:28px 22px;border-radius:24px;text-align:left}
+.harbour h1{color:var(--ink)}.harbour p{opacity:.85}.harbour a{display:block;background:var(--ink);color:var(--sand);text-decoration:none;padding:14px 16px;border-radius:14px;margin:10px 0;font-weight:600}
+.harbour a small{display:block;font-weight:400;opacity:.7;font-size:12px}
+footer{font-size:12px;opacity:.45;text-align:center;padding:12px}
+</style></head><body><main>
+<section id="write">
+<h1>What's in the bottle?</h1><p class="sub">No name. No reply. Just one true sentence. It washes up on a stranger's phone.</p>
+<textarea id="t" maxlength="140" placeholder="I haven't told anyone that…"></textarea>
+<div class="tide"><i id="bar"></i></div><div class="count"><span id="n">140</span></div>
+<p class="label">How does it feel?</p>
+<div class="chips" id="chips"></div>
+<button class="go" id="go" disabled>Drop it into the sea</button>
+</section>
+<section id="sent" class="out"><div style="font-size:40px">〰</div><h1>It's out there now.</h1><p>Someone, somewhere, will pull the cork and send a light. Look at the big screen.</p><p><a href="#" onclick="location.reload();return false" style="color:var(--lamp)">Drop another</a></p></section>
+<section id="held" class="out"><h1>The sea held onto that one.</h1><p id="why"></p><p><a href="#" onclick="location.reload();return false" style="color:var(--lamp)">Rewrite it</a></p></section>
+<section id="crisis" class="out"><div class="harbour"><h1>Let's stay on shore a moment.</h1><p>What you wrote sounds like more than a bottle should carry alone. It wasn't sent. It's still yours. There are people who want to hear it right now, out loud, from you.</p>
+<a href="https://findahelpline.com">Find a helpline where you are<small>findahelpline.com · free, confidential</small></a>
+<a href="tel:988">Call or text 988 (US)<small>Suicide &amp; Crisis Lifeline · 24/7</small></a>
+<a href="tel:131114">Call Lifeline 13 11 14 (AU)<small>24/7</small></a></div></section>
+</main><footer>Tidelight · bottles are anonymous · every bottle is read by Claude before it can exist</footer>
+<script>
+const MOODS=[["storm","anxious","#7390b8"],["deep","heavy","#6169d6"],["ember","angry","#ed7052"],["fog","tired","#adbdb3"],["kelp","hopeful","#45ad8f"],["sun","grateful","#f5bd52"]];
+let mood="deep";const chips=document.getElementById("chips");
+for(const [id,label,c] of MOODS){const b=document.createElement("button");b.className="chip"+(id===mood?" on":"");b.style.setProperty("--c",c);b.innerHTML="<b></b>"+label;b.onclick=()=>{mood=id;[...chips.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");document.documentElement.style.setProperty("--glass",c)};chips.appendChild(b)}
+document.documentElement.style.setProperty("--glass","#6169d6");
+const t=document.getElementById("t"),go=document.getElementById("go");
+let keeper=localStorage.getItem("tidelight.keeper");if(!keeper){keeper=crypto.randomUUID();localStorage.setItem("tidelight.keeper",keeper)}
+t.oninput=()=>{document.getElementById("bar").style.width=(t.value.length/140*100)+"%";document.getElementById("n").textContent=140-t.value.length;go.disabled=t.value.trim().length<3};
+function show(id){document.getElementById("write").style.display="none";document.getElementById(id).style.display="block"}
+go.onclick=async()=>{go.disabled=true;go.textContent="Corking it…";try{
+const r=await fetch(API+"/drop",{method:"POST",headers:{"Content-Type":"application/json",apikey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU",Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU"},body:JSON.stringify({keeper_id:keeper,text:t.value.trim(),mood})});
+const j=await r.json();if(j.status==="sent")show("sent");else if(j.status==="crisis")show("crisis");else{document.getElementById("why").textContent=j.reason||"The sea couldn't carry that one.";show("held")}
+}catch(e){document.getElementById("why").textContent="The sea didn't answer. Try again.";show("held")}};
+</script></body></html>
