@@ -22,6 +22,7 @@ button.go:disabled{opacity:.45}
 .harbour h1{color:var(--ink)}.harbour p{opacity:.85}.harbour a{display:block;background:var(--ink);color:var(--sand);text-decoration:none;padding:14px 16px;border-radius:14px;margin:10px 0;font-weight:600}
 .harbour a small{display:block;font-weight:400;opacity:.7;font-size:12px}
 footer{font-size:12px;opacity:.45;text-align:center;padding:12px}
+.sealine{font:italic 18px/1.35 "New York","Iowan Old Style",Georgia,serif;opacity:.75;margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1)}
 .paper{background:var(--sand);color:var(--ink);border-radius:6px;padding:26px 24px;font:italic 24px/1.35 "New York","Iowan Old Style",Georgia,serif;transform:rotate(-1.5deg);box-shadow:0 20px 40px rgba(0,0,0,.4);margin:14px 0 18px}
 .felt{font-size:13px;opacity:.7}
 button.go.lamp{background:transparent;color:var(--lamp);border:1px solid rgba(255,219,143,.5);position:relative;overflow:hidden}
@@ -29,6 +30,7 @@ button.go.lamp i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(
 button.go.lamp.on{color:var(--ink)}button.go.lamp span{position:relative}
 </style></head><body><main>
 <section id="write">
+<p class="sealine" id="sealine">Listening to the water…</p>
 <h1>What's in the bottle?</h1><p class="sub">No name. No reply. Just one true sentence. It washes up on a stranger's phone.</p>
 <textarea id="t" maxlength="140" placeholder="I haven't told anyone that…"></textarea>
 <div class="tide"><i id="bar"></i></div><div class="count"><span id="n">140</span></div>
@@ -61,6 +63,7 @@ const j=await r.json();if(j.status==="sent")show("sent");else if(j.status==="cri
 
 const hdr={"Content-Type":"application/json",apikey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU",Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqeWhzd3Z0ZWFwZXV4amJza2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MjA5MTIsImV4cCI6MjEwNDA5NjkxMn0.3OzbeVGp3qnIVmvIkVmdiHf9LXJ2EGSR0U_WYvcuSwU"};
 let current=null;
+fetch(API+"/sea?keeper_id="+keeper,{headers:hdr}).then(r=>r.json()).then(j=>{document.getElementById("sealine").textContent=j.sea.line+"  ·  "+j.sea.drifting+" drifting";}).catch(()=>{document.getElementById("sealine").textContent="The sea is out there. Say something to it."});
 async function tide(){document.getElementById("sent").style.display="none";document.getElementById("wash").style.display="block";document.getElementById("paper").textContent="Waiting for the tide…";document.getElementById("felt").textContent="";document.getElementById("lit").style.display="none";document.getElementById("beam").style.display="";
  try{const r=await fetch(API+"/tide?keeper_id="+keeper,{headers:hdr});const j=await r.json();current=j.bottle;
   if(!current){document.getElementById("paper").textContent="The sea is quiet right now. You've read every bottle that drifted by.";document.getElementById("beam").style.display="none";document.getElementById("washlabel").textContent="quiet water";return}
