@@ -39,6 +39,7 @@ footer{font-size:12px;opacity:.45;text-align:center;padding:12px}
 <a href="tel:131114">Call Lifeline 13 11 14 (AU)<small>24/7</small></a></div></section>
 </main><footer>Tidelight · bottles are anonymous · every bottle is read by Claude before it can exist</footer>
 <script>
+const API="https://qjyhswvteapeuxjbskke.supabase.co/functions/v1/api";
 const MOODS=[["storm","anxious","#7390b8"],["deep","heavy","#6169d6"],["ember","angry","#ed7052"],["fog","tired","#adbdb3"],["kelp","hopeful","#45ad8f"],["sun","grateful","#f5bd52"]];
 let mood="deep";const chips=document.getElementById("chips");
 for(const [id,label,c] of MOODS){const b=document.createElement("button");b.className="chip"+(id===mood?" on":"");b.style.setProperty("--c",c);b.innerHTML="<b></b>"+label;b.onclick=()=>{mood=id;[...chips.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");document.documentElement.style.setProperty("--glass",c)};chips.appendChild(b)}
