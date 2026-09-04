@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tidelight · the Harbour</title>
+<meta name="theme-color" content="#f7e6c7">
+<style>
+:root{--sand:#f7e6c7;--sand2:#f2cc9e;--ink:#241f1a;--ember:#db7338}
+body{margin:0;min-height:100dvh;background:linear-gradient(180deg,var(--sand),var(--sand2));color:var(--ink);font:17px/1.5 -apple-system,system-ui,sans-serif}
+main{max-width:560px;margin:0 auto;padding:36px 22px 60px}
+h1{font:600 34px/1.1 "New York","Iowan Old Style",Georgia,serif;margin:14px 0 10px}
+p{margin:0 0 14px}
+.sun{color:var(--ember);font-size:34px}
+.grid{display:grid;gap:10px;margin:22px 0}
+a.line{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--ink);color:var(--sand);text-decoration:none;padding:14px 16px;border-radius:16px}
+a.line b{display:block;font-size:16px}a.line small{display:block;opacity:.7;font-size:12px}
+h2{font:600 13px system-ui;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin:26px 0 8px}
+.foot{font-size:12px;opacity:.6;margin-top:30px}
+</style></head><body><main>
+<div class="sun">☀</div>
+<h1>Let's stay on shore a moment.</h1>
+<p>If what you're carrying is more than a bottle should hold alone, there are people who want to hear it right now, out loud, from you. Free, confidential, and used to exactly this.</p>
+<div class="grid" id="lines"></div>
+<h2>Anywhere in the world</h2>
+<div class="grid">
+<a class="line" href="https://findahelpline.com"><span><b>Find a helpline where you are</b><small>findahelpline.com · every country, verified</small></span><span>↗</span></a>
+</div>
+<p class="foot">Tidelight is not a crisis service and the Keeper is Claude, not a person. If you are in danger this minute, call your local emergency number. Numbers verified 4 September 2026 against 988lifeline.org, lifeline.org.au, samaritans.org, befrienders.org.my, sos.org.sg, telemanas.mohfw.gov.in, 1737.org.nz.</p>
+</main>
+<script>
+const L={
+ US:[["Call or text 988","Suicide & Crisis Lifeline · 24/7","tel:988"]],
+ CA:[["Call or text 988","Suicide Crisis Helpline · 24/7","tel:988"]],
+ AU:[["Call Lifeline 13 11 14","24/7, anywhere in Australia","tel:131114"],["Text Lifeline 0477 13 11 14","If talking feels like too much","sms:0477131114"]],
+ GB:[["Call Samaritans 116 123","Free, 24/7","tel:116123"],["Text SHOUT to 85258","If talking feels like too much","sms:85258&body=SHOUT"]],
+ IE:[["Call Samaritans 116 123","Free, 24/7","tel:116123"],["Text HELLO to 50808","If talking feels like too much","sms:50808&body=HELLO"]],
+ NZ:[["Call or text 1737","Need to talk? · free, 24/7","tel:1737"]],
+ MY:[["Call Befrienders KL 03-7627 2929","24/7, free, confidential","tel:0376272929"],["Talian HEAL 15555","Ministry of Health, 24/7","tel:15555"]],
+ SG:[["Call SOS 1767","Samaritans of Singapore, 24/7","tel:1767"],["WhatsApp SOS 9151 1767","If talking feels like too much","https://wa.me/6591511767"]],
+ IN:[["Call Tele-MANAS 14416","Free, 24/7, many languages","tel:14416"]],
+};
+const region=(new URLSearchParams(location.search).get("r")||(navigator.language.split("-")[1]||"")).toUpperCase();
+const rows=L[region]||[];const el=document.getElementById("lines");
+if(!rows.length){el.innerHTML='<a class="line" href="tel:112"><span><b>Call local emergency services</b><small>If you are in danger right now</small></span><span>↗</span></a>'}
+for(const [b,s,h] of rows){const a=document.createElement("a");a.className="line";a.href=h;a.innerHTML=`<span><b>${b}</b><small>${s}</small></span><span>↗</span>`;el.appendChild(a)}
+</script></body></html>

@@ -44,7 +44,7 @@ const c=document.getElementById("c"),ctx=c.getContext("2d");
 let W=0,H=0,DPR=1;function size(){DPR=Math.min(devicePixelRatio||1,2);W=c.width=innerWidth*DPR;H=c.height=innerHeight*DPR}size();addEventListener("resize",size);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-let state={mood:"deep",lights:0},bottles=[],known=new Set(),ripples=[],flare=0,beamAngle=-2.6,first=true;
+let state={mood:"deep",lights:0,notes:0},bottles=[],known=new Set(),ripples=[],flare=0,beamAngle=-2.6,first=true;
 const stars=[...Array(140)].map((_,i)=>({x:Math.random(),y:Math.random()*.55,r:.6+Math.random()*1.6,p:Math.random()*6}));
 
 function hex(h,a){const n=parseInt(h.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`}
@@ -88,6 +88,7 @@ function drawBottles(t){
     ctx.beginPath();ctx.moveTo(-w*.14,-h*.78);ctx.lineTo(-w*.14,-h*.58);ctx.quadraticCurveTo(-w/2,-h*.58,-w/2,-h*.44);ctx.lineTo(-w/2,h*.1);ctx.quadraticCurveTo(-w/2,h*.22,-w*.3,h*.22);ctx.lineTo(w*.3,h*.22);ctx.quadraticCurveTo(w/2,h*.22,w/2,h*.1);ctx.lineTo(w/2,-h*.44);ctx.quadraticCurveTo(w/2,-h*.58,w*.14,-h*.58);ctx.lineTo(w*.14,-h*.78);ctx.closePath();ctx.fill();ctx.stroke();
     ctx.fillStyle="#b38352";ctx.fillRect(-w*.17,-h*.86,w*.34,h*.1);
     if(!b.synthetic){ctx.fillStyle="rgba(255,219,143,.9)";ctx.beginPath();ctx.arc(0,-h*.95,2.4*DPR,0,7);ctx.fill()}
+    if(b.kind==="helped"){ctx.strokeStyle="rgba(255,219,143,.8)";ctx.lineWidth=1.5*DPR;ctx.beginPath();ctx.arc(0,-h*.2,w*.9,0,7);ctx.stroke()}
     ctx.restore();
   });
 }
@@ -98,12 +99,13 @@ async function poll(){
     const r=await fetch(API+"/sea?keeper_id=00000000-0000-4000-8000-00000000f1de",{headers:{apikey:ANON,Authorization:"Bearer "+ANON}});
     const j=await r.json();const sea=j.sea;
     const lineEl=document.getElementById("line");if(lineEl.textContent!==sea.line){lineEl.style.opacity=0;setTimeout(()=>{lineEl.textContent=sea.line;lineEl.style.opacity=.92},800)}
-    document.getElementById("counts").textContent=`${sea.drifting} bottles drifting · ${sea.live_today} live today · ${sea.lights} lights sent`;
+    document.getElementById("counts").textContent=`${sea.drifting} bottles drifting · ${sea.live_today} live today · ${sea.lights} lights sent · ${sea.notes||0} notes back`;
     const recent=(j.recent||[]).slice().reverse();const t=performance.now()/1000;
-    for(const b of recent){if(!known.has(b.id)){known.add(b.id);const nb={id:b.id,mood:b.mood,synthetic:b.synthetic};if(!first){nb.drop=t;nb.dx=W*(.15+Math.random()*.6);say(b.synthetic?"A bottle drifted in.":"Someone in the room just dropped a bottle.")}bottles.push(nb)}}
+    for(const b of recent){if(!known.has(b.id)){known.add(b.id);const nb={id:b.id,mood:b.mood,synthetic:b.synthetic,kind:b.kind};if(!first){nb.drop=t;nb.dx=W*(.15+Math.random()*.6);say(b.synthetic?"A bottle drifted in.":"Someone in the room just dropped a bottle.")}bottles.push(nb)}}
     if(bottles.length>24)bottles=bottles.slice(-24);
     if(!first&&sea.lights>state.lights){flare=1;say("A light just landed on someone's bottle.")}
-    state={mood:sea.mood,lights:sea.lights};first=false;
+    else if(!first&&(sea.notes||0)>state.notes){flare=.6;say("A note back just reached someone's lantern.")}
+    state={mood:sea.mood,lights:sea.lights,notes:sea.notes||0};first=false;
   }catch(e){document.getElementById("counts").textContent="The sea didn't answer. Trying again…"}
   setTimeout(poll,4000);
 }
