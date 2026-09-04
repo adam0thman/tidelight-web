@@ -35,6 +35,14 @@ const L={
  MY:[["Call Befrienders KL 03-7627 2929","24/7, free, confidential","tel:0376272929"],["Talian HEAL 15555","Ministry of Health, 24/7","tel:15555"]],
  SG:[["Call SOS 1767","Samaritans of Singapore, 24/7","tel:1767"],["WhatsApp SOS 9151 1767","If talking feels like too much","https://wa.me/6591511767"]],
  IN:[["Call Tele-MANAS 14416","Free, 24/7, many languages","tel:14416"]],
+ JP:[["いのちの電話 0570-064-556","24時間","tel:0570064556"],["よりそいホットライン 0120-279-338","無料・24時間","tel:0120279338"]],
+ KR:[["109","자살예방 상담전화 · 24시간","tel:109"]],
+ ES:[["Línea 024","Gratuita, 24/7","tel:024"]],
+ ID:[["119 ext. 8","SEJIWA · 24 jam","tel:119"]],
+ TH:[["1323","สายด่วนสุขภาพจิต · 24 ชม.","tel:1323"]],
+ PH:[["1553","NCMH crisis hotline · 24/7","tel:1553"]],
+ DE:[["TelefonSeelsorge 0800 111 0 111","Kostenlos, rund um die Uhr","tel:08001110111"]],
+ FR:[["3114","Gratuit, 24h/24","tel:3114"]],
 };
 const region=(new URLSearchParams(location.search).get("r")||(navigator.language.split("-")[1]||"")).toUpperCase();
 const rows=L[region]||[];const el=document.getElementById("lines");
